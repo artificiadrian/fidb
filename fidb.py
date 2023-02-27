@@ -64,10 +64,10 @@ def read(**kwargs):
 
 
 @arg("path_type", choices=[PathType.linux.value, PathType.windows.value], help="Path type (linux or windows)")
-@arg("-r", "--regex", help="Only return paths matching regex")
-@arg("-m", "--min-weight", default=1, type=int, help="Minimum weight of path")
-@arg("-s", "--search", help="Only return paths containing string")
-@arg("-t", "--transform", help="Transform path before printing (use {path}, {name} and {dir} as placeholders)")
+@arg("-sr", "--search-regex", help="Only return paths matching regex")
+@arg("-mo", "--min-occurences", default=1, type=int, help="Minimum occurence of paths")
+@arg("-sp", "--search-plain", help="Only return paths containing string")
+@arg("-t", "--transform", help="Transform paths before printing (use {path}, {name} and {dir} as placeholders)")
 @arg("-o", "--only", choices=["dirs", "files"], help="Only return directories or files")
 def query(path_type: PathType, ** kwargs):
     """Query paths"""
@@ -82,16 +82,16 @@ def query(path_type: PathType, ** kwargs):
             query = query\
                 .where(Path.is_dir == (kwargs["only"] == "dirs"))
 
-        if kwargs["regex"] is not None:
+        if kwargs["search_regex"] is not None:
             query = query\
-                .having(Path.value.regexp_match(kwargs["regex"]))
+                .having(Path.value.regexp_match(kwargs["search_regex"]))
 
-        if kwargs["search"] is not None:
+        if kwargs["search_plain"] is not None:
             query = query\
-                .having(Path.value.like(f"%{kwargs['search']}%"))
+                .having(Path.value.like(f"%{kwargs['search_plain']}%"))
 
         query = query\
-            .having(text("weight>=:min_weight").bindparams(min_weight=kwargs["min_weight"]))\
+            .having(text("weight>=:min_weight").bindparams(min_weight=kwargs["min_occurences"]))\
             .order_by(text("value asc, weight desc"))
 
         def transformer(path):

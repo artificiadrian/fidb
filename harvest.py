@@ -5,10 +5,13 @@ from zipfile import ZIP_DEFLATED
 
 
 parser = ArgumentParser()
-parser.add_argument("--root", default=os.path.abspath(os.sep))
-parser.add_argument("--output", default="paths.txt")
-parser.add_argument("--zip", action="store_true", default=True)
-parser.add_argument("--omit")
+parser.add_argument("--root", default=os.path.abspath(os.sep),
+                    help="Root directory to start harvesting from")
+parser.add_argument("--output", default="paths.txt",
+                    help="Output file")
+parser.add_argument("--zip", action="store_true",
+                    default=True, help="Zip output file")
+parser.add_argument("--omit", help="Omit paths matching regex")
 
 args = parser.parse_args()
 
