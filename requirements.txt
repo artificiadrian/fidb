@@ -1,0 +1,11 @@
+argh==0.28.1
+autopep8==2.0.1
+greenlet==2.0.2
+markdown-it-py==2.2.0
+mdurl==0.1.2
+pycodestyle==2.10.0
+Pygments==2.14.0
+rich==13.3.1
+SQLAlchemy==2.0.4
+tomli==2.0.1
+typing_extensions==4.5.0
