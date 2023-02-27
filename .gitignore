@@ -1,0 +1,6 @@
+venv/
+db.sqlite
+__pycache__
+.idea/
+paths.txt
+paths.txt.zip
