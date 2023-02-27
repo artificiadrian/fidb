@@ -63,20 +63,20 @@ def read(**kwargs):
         pass
 
 
-@arg("path_type", choices=[PathType.linux.value, PathType.windows.value], help="Path type (linux or windows)")
+@arg("-t", "--path_type", choices=[PathType.linux.value, PathType.windows.value], help="Path type (linux or windows)")
 @arg("-sr", "--search-regex", help="Only return paths matching regex")
 @arg("-mo", "--min-occurences", default=1, type=int, help="Minimum occurence of paths")
 @arg("-sp", "--search-plain", help="Only return paths containing string")
-@arg("-t", "--transform", help="Transform paths before printing (use {path}, {name} and {dir} as placeholders)")
+@arg("-tr", "--transform", help="Transform paths before printing (use {path}, {name} and {dir} as placeholders)")
 @arg("-o", "--only", choices=["dirs", "files"], help="Only return directories or files")
-def query(path_type: PathType, ** kwargs):
+def query(**kwargs):
     """Query paths"""
     engine = init_engine(kwargs["db"])
     print(kwargs)
     with Session(engine) as session:
         query = session.query(Path.value, func.count(Path.value).label("weight"))\
             .group_by(Path.value)\
-            .where(Path.type == path_type)
+            .where(Path.type == kwargs["path_type"])
 
         if kwargs["only"] is not None:
             query = query\
