@@ -6,8 +6,8 @@ from sqlalchemy import func
 
 
 class PathType(enum.Enum):
-    linux = "l"
-    windows = "w"
+    linux = "lin"
+    windows = "win"
 
 
 class Base(DeclarativeBase):
@@ -24,8 +24,14 @@ class Path(Base):
 
 
 def to_path(path: str) -> Path:
-    return Path(
+    path = path.strip()
+    obj = Path(
         value=path,
         is_dir=path.endswith("/") or path.endswith("\\"),
-        type=PathType.linux if "/" in path else PathType.windows,
+        type=PathType.linux.value if "/" in path else PathType.windows.value,
     )
+
+    if obj.is_dir:
+        obj.value = obj.value.rstrip("/\\")
+
+    return obj

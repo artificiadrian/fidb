@@ -1,5 +1,6 @@
 venv/
 db.sqlite
+db.sqlite-journal
 __pycache__
 .idea/
 paths.txt
