@@ -64,11 +64,12 @@ def read(**kwargs):
 
 
 @arg("-t", "--type", choices=[PathType.linux.value, PathType.windows.value], help="Path type (linux or windows)")
-@arg("-sr", "--search-regex", help="Only return paths matching regex")
+@arg("-sr", "--search-regex", help="Only return paths matching regex (prefer --search-plain as it's faster)")
 @arg("-mo", "--min-occurences", default=1, type=int, help="Minimum occurence of paths")
 @arg("-sp", "--search-plain", help="Only return paths containing string")
 @arg("-f", "--format", help="Format paths before printing (use {path}, {name} and {dir} as placeholders)")
 @arg("-o", "--only", choices=["dirs", "files"], help="Only return directories or files")
+@arg("-rt", "--relative-to", help="Return paths as relative to this path")
 def query(**kwargs):
     """Query paths"""
     engine = init_engine(kwargs["db"])
@@ -105,9 +106,14 @@ def query(**kwargs):
 
             return path
 
+        def relativize(path):
+            if kwargs["relative_to"] is not None:
+                return os.path.relpath(path, kwargs["relative_to"])
+            return path
+
         count = 0
         for path, _ in query:
-            print(transformer(path))
+            print(transformer(relativize(path)))
             count += 1
 
         if count == 0:
