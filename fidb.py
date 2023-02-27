@@ -63,20 +63,21 @@ def read(**kwargs):
         pass
 
 
-@arg("-t", "--path_type", choices=[PathType.linux.value, PathType.windows.value], help="Path type (linux or windows)")
+@arg("-t", "--type", choices=[PathType.linux.value, PathType.windows.value], help="Path type (linux or windows)")
 @arg("-sr", "--search-regex", help="Only return paths matching regex")
 @arg("-mo", "--min-occurences", default=1, type=int, help="Minimum occurence of paths")
 @arg("-sp", "--search-plain", help="Only return paths containing string")
-@arg("-tr", "--transform", help="Transform paths before printing (use {path}, {name} and {dir} as placeholders)")
+@arg("-f", "--format", help="Format paths before printing (use {path}, {name} and {dir} as placeholders)")
 @arg("-o", "--only", choices=["dirs", "files"], help="Only return directories or files")
 def query(**kwargs):
     """Query paths"""
     engine = init_engine(kwargs["db"])
-    print(kwargs)
     with Session(engine) as session:
         query = session.query(Path.value, func.count(Path.value).label("weight"))\
-            .group_by(Path.value)\
-            .where(Path.type == kwargs["path_type"])
+            .group_by(Path.value)
+
+        if kwargs["type"] is not None:
+            query = query.where(Path.type == kwargs["type"])
 
         if kwargs["only"] is not None:
             query = query\
@@ -92,11 +93,12 @@ def query(**kwargs):
 
         query = query\
             .having(text("weight>=:min_weight").bindparams(min_weight=kwargs["min_occurences"]))\
+            .distinct()\
             .order_by(text("value asc, weight desc"))
 
         def transformer(path):
-            if kwargs["transform"] is not None:
-                return kwargs["transform"]\
+            if kwargs["format"] is not None:
+                return kwargs["format"]\
                     .replace("{path}", path)\
                     .replace("{name}", os.path.basename(path))\
                     .replace("{dir}", os.path.dirname(path))
