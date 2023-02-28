@@ -1,6 +1,8 @@
 # fidb
+![GitHub](https://img.shields.io/github/license/kijube/fidb)
 
 fidb is a Python tool that enables you to maintain a file inclusion path database. You grow your database by harvesting paths from different systems (e.g. in 24/7 CTFs like HackTheBox or while penetration testing). Then, you query for the paths you need right now (e.g. Windows only, file paths, paths containing "password" or common paths found in multiple systems). You may also specify the current directory of your file inclusion to make all queried paths relative.
+
 
 ## Getting Started
 ### Installing fidb
@@ -31,6 +33,7 @@ python3 fidb.py query -t lin -sp "password" -mo 3
 ```
 You can find more examples below.
 
+
 ## Usage
 ```bash
 usage: fidb.py [-h] [--db DB] {unzip,read,query} ...
@@ -46,6 +49,7 @@ options:
   --db DB             Database connection string (default: 'sqlite:///db.sqlite')
 ```
 To get further information on the `unzip`, `read` and `query` modules, simply use the `python3 fidb.py <cmd> -h` syntax.
+
 
 ## Examples
 #### Adding paths to the database from stdin using read command
