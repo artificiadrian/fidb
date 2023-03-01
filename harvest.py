@@ -21,7 +21,7 @@ count = 0
 print("[*] Harvesting paths...")
 with open(args.output, "w") as f:
     for root, dirs, files in os.walk(args.root):
-        for path in [*[os.path.join(root, f) for f in files], *[os.path.join(root, d) + os.sep for d in dirs]]:
+        for path in [*[os.path.abspath(os.path.join(root, f)) for f in files], *[os.path.abspath(os.path.join(root, d)) + os.sep for d in dirs]]:
             if args.omit is not None and re.match(args.omit, path) is not None:
                 continue
             try:
